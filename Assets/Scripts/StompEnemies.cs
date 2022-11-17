@@ -20,6 +20,7 @@ public class StompEnemies : MonoBehaviour
     PacingEnemy pacingEnemyScript;
     Animator enemyAnimator;
     GameObject enemyObject;
+    private static readonly int Stomped = Animator.StringToHash("Stomped");
 
     void Start()
     {
@@ -34,14 +35,7 @@ public class StompEnemies : MonoBehaviour
         bool stomp = Physics.Linecast(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), stompCheck.position, enemyHeads);
         Debug.DrawLine(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), stompCheck.position, Color.red);
 
-        if (stomp)
-        {
-            canKill = true;
-        }
-        else
-        {
-            canKill = false;
-        }
+        canKill = stomp;
 
     }
     void OnCollisionEnter(Collision other)
@@ -50,22 +44,22 @@ public class StompEnemies : MonoBehaviour
         {
             if (getHitScript.hurt == false)
             {
-                if (other.gameObject.tag == "Enemy")
+                if (other.gameObject.CompareTag("Enemy"))
                 {
                     enemyObject = other.gameObject;
                     enemyAnimator = enemyObject.GetComponent<Animator>();
-                    enemyAnimator.SetTrigger("Stomped");
+                    enemyAnimator.SetTrigger(Stomped);
                     Kill();
-                    StartCoroutine("DestroyEnemy");
+                    StartCoroutine(nameof(DestroyEnemy));
                 }
 
-                if (other.gameObject.tag == "Trap")
+                if (other.gameObject.CompareTag("Trap"))
                 {
                     pacingEnemyScript = other.gameObject.GetComponent<PacingEnemy>();
                     pacingEnemyScript.enemyStats.speed = 0;
                     enemyObject = other.gameObject;
                     Kill();
-                    StartCoroutine("DestroyTrap");
+                    StartCoroutine(nameof(DestroyTrap));
                 }
             }
         }

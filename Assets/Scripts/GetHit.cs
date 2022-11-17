@@ -1,13 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GetHit : MonoBehaviour
 {
     [Tooltip("Determines when the player is taking damage.")]
-    public bool hurt = false;
+    public bool hurt;
 
-    private bool slipping = false;
+    private bool slipping;
     private PlayerMovement playerMovementScript;
     private Rigidbody rb;
     private Transform enemy;
@@ -20,9 +19,9 @@ public class GetHit : MonoBehaviour
     private void FixedUpdate()
     {
         // stops the player from running up the slopes and skipping platforms
-        if (slipping == true)
+        if (slipping)
         {
-            transform.Translate(Vector3.back * 20 * Time.deltaTime, Space.World);
+            transform.Translate(Vector3.back * (20 * Time.deltaTime), Space.World);
             playerMovementScript.playerStats.canMove = false;
         }
     }
@@ -30,14 +29,14 @@ public class GetHit : MonoBehaviour
     {
         if (hurt == false)
         {
-            if (other.gameObject.tag == "Enemy")
+            if (other.gameObject.CompareTag("Enemy"))
             {
                 enemy = other.gameObject.transform;
                 rb.AddForce(enemy.forward * 1000);
                 rb.AddForce(transform.up * 500);
                 TakeDamage();
             }
-            if (other.gameObject.tag == "Trap")
+            if (other.gameObject.CompareTag("Trap"))
             {
                 rb.AddForce(transform.forward * -1000);
                 rb.AddForce(transform.up * 500);
@@ -50,7 +49,7 @@ public class GetHit : MonoBehaviour
         }
         if (other.gameObject.layer != 9)
         {
-            if (slipping == true)
+            if (slipping)
             {
                 slipping = false;
                 playerMovementScript.playerStats.canMove = true;
@@ -62,7 +61,8 @@ public class GetHit : MonoBehaviour
         hurt = true;
         playerMovementScript.playerStats.canMove = false;
         playerMovementScript.soundManager.PlayHitSound();
-        StartCoroutine("Recover");
+        playerMovementScript.ChangeHealth(-1);
+        StartCoroutine(nameof(Recover));
     }
     private IEnumerator Recover()
     {

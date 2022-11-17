@@ -11,8 +11,9 @@ public class PlayerMovement : MonoBehaviour
     [System.Serializable]
     public struct Stats
     {
-       
-        
+        [Tooltip("The current player's Health")]
+        public float health;
+
         [Tooltip("How fast the player runs.")]
         public float speed;
 
@@ -51,7 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (playerStats.canMove == true)
+        if (playerStats.canMove)
         {
 
             // maps movement onto WASD keys and arrow keys
@@ -89,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         {
             
             // directional movement is wrapped around which way the camera is facing
-            Vector3 movement = ((mainCamera.right * moveX) * playerStats.speed) + ((mainCamera.forward * moveY) * playerStats.speed);
+            Vector3 movement = (mainCamera.right * (moveX * playerStats.speed)) + (mainCamera.forward * (moveY * playerStats.speed));
             rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
 
             // player faces the direction they are moving towards
@@ -106,6 +107,11 @@ public class PlayerMovement : MonoBehaviour
         playerStats.canJump = false;
         soundManager.PlayJumpSound();
         rb.AddForce(Vector3.up * playerStats.jumpForce);
+    }
+    
+    public void ChangeHealth(float amount)
+    {
+        playerStats.health += amount;
     }
 
 }
