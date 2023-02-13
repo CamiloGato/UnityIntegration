@@ -16,8 +16,19 @@ public class CollectCoins : MonoBehaviour
             playerMovementScript = other.GetComponent<PlayerMovement>();
             playerMovementScript.soundManager.PlayCoinSound();
             ScoreManager.score += 10;
+            ScoreManager.amountCoinsCollected += 1;
+            CheckAmountCoinsCollected();
             GameObject particles = Instantiate(coinParticles, transform.position, new Quaternion());
             Destroy(gameObject);
+        }
+    }
+    
+    private void CheckAmountCoinsCollected()
+    {
+        if (ScoreManager.amountCoinsCollected == 10)
+        {
+            ScoreManager.amountCoinsCollected = 0;
+            playerMovementScript.ChangeHealth(10);
         }
     }
 }

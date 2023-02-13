@@ -111,7 +111,20 @@ public class PlayerMovement : MonoBehaviour
     
     public void ChangeHealth(float amount)
     {
+        if (playerStats.health + amount <= 0)
+        {
+            playerStats.health = 0;
+            print("Player is dead");
+            return;
+        }
+        if (playerStats.health + amount >= 100)
+        {
+            playerStats.health = 100;
+            print("Player is at full health");
+            return;
+        }
         playerStats.health += amount;
+        print("Player's health is now " + playerStats.health);
     }
 
 }
